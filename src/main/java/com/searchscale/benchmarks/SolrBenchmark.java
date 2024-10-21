@@ -39,13 +39,14 @@ public class SolrBenchmark {
 
       String[] row = null;
       while((row = csv.readNext()) != null) {
+         ++counter;
+
          if(row.length<4) {
-            System.out.println(csv.line);
+            System.out.println("line# "+counter+  csv.line);
             break;
          }
 
          if(true) continue;
-         ++counter;
          if (counter % batchSize == 0) {
             System.out.println(counter + ": " + row[0]+" "+row[1]+ " "+row[2] );
             if (index) {

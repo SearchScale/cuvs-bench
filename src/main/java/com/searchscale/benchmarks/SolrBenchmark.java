@@ -43,12 +43,11 @@ public class SolrBenchmark {
          if(row.length<4) {
             continue;
          }
+         JSONArray vectorJson = null;
          try {
-            JSONArray vectorJson = new JSONArray(row[3]);
+             vectorJson = new JSONArray(row[3]);
          } catch (JSONException e) {
-            e.printStackTrace();
-            System.out.println("Invalid json at line "+ counter+ csv.line);
-            break;
+          continue;
          }
 
 //         if(true) continue;
@@ -67,7 +66,6 @@ public class SolrBenchmark {
 
          SolrInputDocument doc = new SolrInputDocument();
          doc.addField("id", row[0]);
-         JSONArray vectorJson = new JSONArray(row[3]);
          float[] vector = new float[vectorJson.length()];
 
          for(int i = 0; i < vectorJson.length(); ++i) {

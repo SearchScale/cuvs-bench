@@ -39,7 +39,12 @@ public class SolrBenchmark {
 
       String[] row = null;
       while((row = csv.readNext()) != null) {
-         if(true)break;
+         if(row.length<4) {
+            System.out.println(csv.line);
+            break;
+         }
+
+         if(true) continue;
          ++counter;
          if (counter % batchSize == 0) {
             System.out.println(counter + ": " + row[0]+" "+row[1]+ " "+row[2] );
@@ -78,6 +83,7 @@ public class SolrBenchmark {
    public static class CSV {
       String[] headers ;
       final BufferedReader rdr;
+      String line;
 
 
       public CSV(Reader rdr) throws IOException {
@@ -93,7 +99,7 @@ public class SolrBenchmark {
 
       // Method to parse a single line of CSV, handling quoted fields
       private static String[] parseLine(String line) {
-         System.out.println(line);
+//         System.out.println(line);
          List<String> values = new ArrayList<>();
          StringBuilder currentValue = new StringBuilder();
          boolean inQuotes = false;
@@ -118,13 +124,13 @@ public class SolrBenchmark {
          // Add the last value
          values.add(currentValue.toString());
 
-         System.out.println("parsed : "+ values.toString());
+//         System.out.println("parsed : "+ values.toString());
 
          return values.toArray(new String[0]);
       }
 
       public String[] readNext() throws IOException {
-         String line = this.rdr.readLine();
+         line = this.rdr.readLine();
          if(line == null) return null;
          return parseLine(line);
       }

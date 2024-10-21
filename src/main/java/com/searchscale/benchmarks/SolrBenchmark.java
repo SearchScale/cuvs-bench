@@ -43,6 +43,12 @@ public class SolrBenchmark {
          if(row.length<4) {
             continue;
          }
+         try {
+            JSONArray vectorJson = new JSONArray(row[3]);
+         } catch (JSONException e) {
+            System.out.println("Invalid json at line "+ counter+ csv.line);
+            break;
+         }
 
 //         if(true) continue;
          if (counter % batchSize == 0) {

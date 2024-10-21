@@ -118,7 +118,7 @@ public class SolrBenchmark {
          // Add the last value
          values.add(currentValue.toString());
 
-         System.out.println(values.toString());
+         System.out.println("parsed : "+ values.toString());
 
          return values.toArray(new String[0]);
       }

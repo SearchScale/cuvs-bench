@@ -40,12 +40,11 @@ public class SolrBenchmark {
       String[] row = null;
       while((row = csv.readNext()) != null) {
          ++counter;
-
          if(row.length<4) {
-            System.out.println("line# "+counter+  csv.line);
+            continue;
          }
 
-         if(true) continue;
+//         if(true) continue;
          if (counter % batchSize == 0) {
             System.out.println(counter + ": " + row[0]+" "+row[1]+ " "+row[2] );
             if (index) {

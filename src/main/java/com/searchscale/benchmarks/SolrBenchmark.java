@@ -43,7 +43,6 @@ public class SolrBenchmark {
 
          if(row.length<4) {
             System.out.println("line# "+counter+  csv.line);
-            break;
          }
 
          if(true) continue;

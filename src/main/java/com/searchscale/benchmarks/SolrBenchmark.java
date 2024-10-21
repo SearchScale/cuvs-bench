@@ -56,10 +56,10 @@ public class SolrBenchmark {
          SolrInputDocument doc = new SolrInputDocument();
          doc.addField("id", rawdoc.get("id"));
          JSONArray vectorJson = new JSONArray(rawdoc.getString("article_vector"));
-         List<Float> vector = new ArrayList(vectorJson.length());
+         float[] vector = new float[vectorJson.length()];
 
          for(int i = 0; i < vectorJson.length(); ++i) {
-            vector.add(vectorJson.getFloat(i));
+            vector[i] = vectorJson.getFloat(i);
          }
 
          doc.addField("article_vector", vector);

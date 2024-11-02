@@ -6,9 +6,9 @@ BASEDIR=`pwd`
 pkill -9 java
 
 #wget -c https://dlcdn.apache.org/solr/solr/9.7.0/solr-9.7.0.tgz
-wget -c https://archive.apache.org/dist/solr/solr/9.6.1/solr-9.6.1.tgz
-rm -rf solr-9.6.1; tar -xf solr-9.6.1.tgz
-cd solr-9.6.1
+#wget -c https://archive.apache.org/dist/solr/solr/9.6.1/solr-9.6.1.tgz
+rm -rf solr-9.6.2-SNAPSHOT-slim; tar -xf solr-9.6.2-SNAPSHOT-slim.tgz
+cd solr-9.6.2-SNAPSHOT-slim
 rm -rf cuvsconf; mkdir cuvsconf
 
 tee -a cuvsconf/solrconfig.xml << EOM
@@ -38,10 +38,10 @@ tee -a cuvsconf/schema.xml << EOM
 </schema>
 EOM
 
-sed '30i permission java.lang.RuntimePermission "loadLibrary.*";' server/etc/security.policy > tmp.policy
-mv tmp.policy server/etc/security.policy
+#sed '30i permission java.lang.RuntimePermission "loadLibrary.*";' server/etc/security.policy > tmp.policy
+#mv tmp.policy server/etc/security.policy
 
-cp $CUVSJAR server/solr-webapp/webapp/WEB-INF/lib/.
+#cp $CUVSJAR server/solr-webapp/webapp/WEB-INF/lib/.
 
 bin/solr -c -m "16g"
 
@@ -52,5 +52,5 @@ curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=test&numSh
 
 #time python3 $BASEDIR/jsonify.py $DATAFILE 2048 50000 4
 
-java -cp /home/ishan/code/solr-cuvs-benchmarks/target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.SolrBenchmark /home/ishan/code/wikipedia.jsonl.gz true 50000 5000
+#java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.SolrBenchmark wikipedia_vector_dump_100.csv.gz true 50000 5000
 

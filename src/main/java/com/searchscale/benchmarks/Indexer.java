@@ -53,7 +53,7 @@ public class Indexer {
             System.out.println(total.sum());
         }
         long end = System.currentTimeMillis();
-        System.out.println("\nTotal time: " + (double) (end - start) / 1000.0D);
+        System.out.println("\nTotal time: " + (end - start) / 1000);
     }
 
     public static void indexBatch(SolrClient solrClient, CSV csv, String[] firstRow, int batchSize, String coll, LongAdder total) throws SolrServerException, IOException {

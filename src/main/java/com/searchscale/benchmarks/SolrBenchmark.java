@@ -77,11 +77,11 @@ public class SolrBenchmark {
                         String[] row = firstRow;
                         for (; ; ) {
                             if (row == null) break;
-                            if((total.sum()+counter) % 10 ==0 ){
+                          /*  if((total.sum()+counter) % 10 ==0 ){
                                 System.out.print(total.sum()+counter);
                             } else {
                                 System.out.print(".");
-                            }
+                            }*/
                             Doc d = new Doc(row);
                             if (d.isErr) {
                                 errs++;
@@ -143,11 +143,17 @@ public class SolrBenchmark {
             this.article = row[2];
             try {
                 List<Object> vectorJson = (List<Object>) Utils.fromJSONString(row[3]);
+                if(vectorJson.size() > 2049) {
+                    isErr = true;
+                    System.out.println("too long vector : "+ vectorJson.size() +" for doc : "+ row[0]);
+                    return;
+                }
                 article_vector = new float[vectorJson.size()];
                 for (int i = 0; i < vectorJson.size(); ++i) {
                     article_vector[i] = ((Number) vectorJson.get(i)).floatValue();
                 }
             } catch (Exception e) {
+                System.out.println("Error parsing "+ row[0]+ "  "+ e.getMessage());
                 isErr = true;
             }
         }

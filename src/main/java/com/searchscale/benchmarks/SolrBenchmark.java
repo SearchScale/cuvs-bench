@@ -46,14 +46,16 @@ public class SolrBenchmark {
 
     private static void indexDocs(SolrClient solrClient, long start, InputStream in, String coll, int batchSize) throws SolrServerException, IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        System.out.println("Starting index:");
         CSV csv = new CSV(br);
         for (; ; ) {
             String[] row = csv.readNext();
             if (row == null) break;
             indexBatch(solrClient, csv, row, batchSize, coll);
+            System.out.print(".");
         }
         long end = System.currentTimeMillis();
-        System.out.println("Total time: " + (double) (end - start) / 1000.0D);
+        System.out.println("\nTotal time: " + (double) (end - start) / 1000.0D);
     }
 
     private static void indexBatch(SolrClient solrClient, CSV csv, String[] firstRow, int count, String coll) throws SolrServerException, IOException {

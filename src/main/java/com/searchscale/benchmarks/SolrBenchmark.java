@@ -22,7 +22,7 @@ public class SolrBenchmark {
 
 
         try (InputStream in = new GZIPInputStream(new FileInputStream(new File(filename)))) {
-            Indexer.indexDocs(client, 0, in,  testColl, batchSize);
+            Indexer.indexDocs(client, System.currentTimeMillis(), in,  testColl, batchSize);
         }
         client.close();
 

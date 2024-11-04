@@ -45,6 +45,7 @@ public class SolrBenchmark {
         try (InputStream in = new GZIPInputStream(new FileInputStream(new File(filename)))) {
             indexDocs(client, 0, in,  testColl, batchSize);
         }
+        client.close();
 
     }
 

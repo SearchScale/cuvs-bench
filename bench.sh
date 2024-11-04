@@ -16,8 +16,8 @@ tee -a cuvsconf/solrconfig.xml << EOM
 <config>
     <luceneMatchVersion>LATEST</luceneMatchVersion>
     <directoryFactory name="DirectoryFactory" class="solr.NRTCachingDirectoryFactory"/>
-    <!-- codecFactory name="CodecFactory" class="com.searchscale.lucene.vectorsearch.SolrCuVSCodecFactory" />
-    <queryParser name="cuvs" class="com.searchscale.lucene.vectorsearch.SolrCUVsQParserPlugin"/ -->
+    <codecFactory name="CodecFactory" class="com.searchscale.lucene.vectorsearch.SolrCuVSCodecFactory" />
+    <queryParser name="cuvs" class="com.searchscale.lucene.vectorsearch.SolrCUVsQParserPlugin"/>
     <requestHandler name="/select" class="solr.SearchHandler"></requestHandler>
 </config>
 EOM

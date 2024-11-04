@@ -26,6 +26,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.zip.GZIPInputStream;
 
 import static org.apache.solr.common.util.JavaBinCodec.*;
@@ -51,17 +52,18 @@ public class SolrBenchmark {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         System.out.println("Starting index:");
         CSV csv = new CSV(br);
+        LongAdder total = new LongAdder();
         for (; ; ) {
             String[] row = csv.readNext();
             if (row == null) break;
-            indexBatch(solrClient, csv, row, batchSize, coll);
+            indexBatch(solrClient, csv, row, batchSize, coll, total);
             System.out.print(".");
         }
         long end = System.currentTimeMillis();
         System.out.println("\nTotal time: " + (double) (end - start) / 1000.0D);
     }
 
-    private static void indexBatch(SolrClient solrClient, CSV csv, String[] firstRow, int count, String coll) throws SolrServerException, IOException {
+    private static void indexBatch(SolrClient solrClient, CSV csv, String[] firstRow, int batchSize, String coll, LongAdder total) throws SolrServerException, IOException {
         GenericSolrRequest gsr = new GenericSolrRequest(SolrRequest.METHOD.POST, "/update",
                 new MapSolrParams(Map.of("commit", "true")))
                 .setContentWriter(new RequestWriter.ContentWriter() {
@@ -74,18 +76,24 @@ public class SolrBenchmark {
                         String[] row = firstRow;
                         for (; ; ) {
                             if (row == null) break;
+                            if((total.sum()+counter) % 10 ==0 ){
+                                System.out.print(total.sum()+counter);
+                            } else {
+                                System.out.print(".");
+                            }
                             Doc d = new Doc(row);
                             if (d.isErr) {
                                 errs++;
                                 continue;
                             }
                             codec.writeMap(d);
-                            ++counter;
-                            if (counter > count) break;
+                            counter++;
+                            if (counter >= batchSize) break;
                             row = csv.readNext();
                         }
                         codec.writeTag(END);
                         codec.close();
+                        total.add(counter);
                         if(errs>0){
                             System.out.println("errs : "+errs);
                         }
@@ -97,7 +105,7 @@ public class SolrBenchmark {
                     }
                 });
 
-        gsr.process(solrClient, "test");
+        gsr.process(solrClient, coll);
     }
 
     static JavaBinCodec.ObjectResolver FLOAT_ARR_RESOLVER = (o, c) -> {

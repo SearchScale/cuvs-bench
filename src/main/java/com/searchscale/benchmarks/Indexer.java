@@ -76,7 +76,7 @@ public class Indexer {
                             try {
                                 codec.writeMap(parse(row));
                                 counter++;
-                                if (counter % 100 == 0) System.out.println(".");
+                                if (counter % 1000 == 0) System.out.print(".");
                                 if (counter >= batchSize) break;
                             } catch (IllegalArgumentException exp) {
                                 errs++;

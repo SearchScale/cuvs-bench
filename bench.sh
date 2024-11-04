@@ -52,5 +52,5 @@ curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=test&numSh
 
 #time python3 $BASEDIR/jsonify.py $DATAFILE 2048 50000 4
 
-#java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.SolrBenchmark wikipedia_vector_dump_100.csv.gz true 50000 5000
+#java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.SolrBenchmark wikipedia_vector_dump_100.csv.gz true -1 100000
 

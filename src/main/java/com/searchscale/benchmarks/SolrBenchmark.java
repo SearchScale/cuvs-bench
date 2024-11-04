@@ -64,6 +64,7 @@ public class SolrBenchmark {
                 .setContentWriter(new RequestWriter.ContentWriter() {
                     @Override
                     public void write(OutputStream os) throws IOException {
+                        int errs=0;
                         int counter = 0;
                         JavaBinCodec codec = new JavaBinCodec(os, FLOAT_ARR_RESOLVER);
                         codec.writeTag(ITERATOR);
@@ -71,7 +72,10 @@ public class SolrBenchmark {
                         for (; ; ) {
                             if (row == null) break;
                             Doc d = new Doc(row);
-                            if (d.isErr) continue;
+                            if (d.isErr) {
+                                errs++;
+                                continue;
+                            }
                             codec.writeMap(d);
                             ++counter;
                             if (counter > count) break;
@@ -79,6 +83,9 @@ public class SolrBenchmark {
                         }
                         codec.writeTag(END);
                         codec.close();
+                        if(errs>0){
+                            System.out.println("errs : "+errs);
+                        }
                     }
 
                     @Override
@@ -86,6 +93,7 @@ public class SolrBenchmark {
                         return CommonParams.JAVABIN_MIME;
                     }
                 });
+
         gsr.process(solrClient, "test");
     }
 

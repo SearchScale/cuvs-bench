@@ -3,6 +3,8 @@ package com.searchscale.benchmarks;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.CloudHttp2SolrClient;
+import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient.Builder;
 import org.apache.solr.client.solrj.request.GenericSolrRequest;
@@ -35,7 +37,8 @@ public class SolrBenchmark {
         int totalDocs = Integer.parseInt(args[2]);
         int batchSize = Integer.parseInt(args[3]);
         String testColl = "test";
-        HttpSolrClient client = (new Builder()).withBaseSolrUrl("http://localhost:8983/solr").build();
+        SolrClient client = new Http2SolrClient.Builder("http://localhost:8983/solr")
+                .build();
 
 
         try (InputStream in = new GZIPInputStream(new FileInputStream(new File(filename)))) {

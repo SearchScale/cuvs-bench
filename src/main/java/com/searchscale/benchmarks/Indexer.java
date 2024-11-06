@@ -71,6 +71,9 @@ public class Indexer {
             codec.writeTag(END);
             codec.close();
             os.close();
+
+
+            Object result = new JavaBinCodec().unmarshal(new FileInputStream(outputFile));
         }
     }
 

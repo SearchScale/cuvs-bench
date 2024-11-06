@@ -16,8 +16,6 @@ tee -a cuvsconf/solrconfig.xml << EOM
 <config>
     <luceneMatchVersion>LATEST</luceneMatchVersion>
     <directoryFactory name="DirectoryFactory" class="solr.NRTCachingDirectoryFactory"/>
-    <codecFactory name="CodecFactory" class="com.searchscale.lucene.vectorsearch.SolrCuVSCodecFactory" />
-    <queryParser name="cuvs" class="com.searchscale.lucene.vectorsearch.SolrCUVsQParserPlugin"/>
     <requestHandler name="/select" class="solr.SearchHandler"></requestHandler>
 </config>
 EOM
@@ -52,5 +50,10 @@ curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=test&numSh
 
 #time python3 $BASEDIR/jsonify.py $DATAFILE 2048 50000 4
 
-#java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.SolrBenchmark wikipedia_vector_dump_100.csv.gz true -1 100000 3
+#java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.SolrBenchmark /data/wikipedia_vector_dump.csv.gz true -1 100000 3
 
+#generate javabin
+#java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.Indexer /data/wikipedia_vector_dump.csv.gz  100k.javabin 100000
+
+#POST javabin payload to solr
+# time curl -X POST --data-binary "@100k.javabin" -H "Content-Type: application/javabin" http://localhost:8983/solr/test/update?commit=true

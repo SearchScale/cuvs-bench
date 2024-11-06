@@ -11,7 +11,8 @@ import org.apache.solr.common.MapWriter;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.util.JavaBinCodec;
-import org.eclipse.jetty.util.BlockingArrayQueue;
+import java.util.concurrent.ArrayBlockingQueue;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class Indexer {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String header = br.readLine();
         AtomicLong total = new AtomicLong();
-        BlockingArrayQueue<String> queue = new BlockingArrayQueue<>();
+        ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<String>(10000);
         System.out.println("\nStarting index %%%%%%%%%%%%%%%");
         Thread[] t = new Thread[threads];
         for (int i = 0; i < t.length; i++) {
@@ -45,10 +46,11 @@ public class Indexer {
         while (true) {
             String line = br.readLine();
             if(line == null) {
-                queue.offer(EOL);
+                System.out.println(EOL);
+                queue.put(EOL);
                 break;
             }
-            queue.offer(line);
+            queue.put(line);
 
         }
         for (Thread thread : t) {
@@ -61,7 +63,7 @@ public class Indexer {
 
     static class IndexRunnable implements Runnable{
         final AtomicLong total ;
-        final BlockingArrayQueue<String> queue;
+        final ArrayBlockingQueue<String> queue;
         final SolrClient solrClient;
         final String coll;
         final int batchSz;
@@ -69,7 +71,7 @@ public class Indexer {
         int id;
 
 
-        IndexRunnable(int id, AtomicLong total, BlockingArrayQueue<String> rows, SolrClient solrClient, String coll, int batchSz) {
+        IndexRunnable(int id, AtomicLong total, ArrayBlockingQueue<String> rows, SolrClient solrClient, String coll, int batchSz) {
             this.id = id;
             this.total = total;
             this.queue = rows;
@@ -82,10 +84,19 @@ public class Indexer {
             codec.writeTag(ITERATOR);
             for(;;){
 
-                String line = queue.remove();
+                String line = null;
+                try {
+                    line = queue.take();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 if(line == EOL){
                     eol = true;
-                    queue.offer(line);//put it back so that other threads can exit too
+                    try {
+                        queue.put(line);//put it back so that other threads can exit too
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                     break;
                 } else {
                     MapWriter d = null;

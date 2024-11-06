@@ -16,13 +16,14 @@ public class SolrBenchmark {
         boolean index = Boolean.parseBoolean(args[1]);
         int totalDocs = Integer.parseInt(args[2]);
         int batchSize = Integer.parseInt(args[3]);
+        int threads = Integer.parseInt(args[4]);
         String testColl = "test";
         SolrClient client = new Http2SolrClient.Builder("http://localhost:8983/solr")
                 .build();
 
 
         try (InputStream in = new GZIPInputStream(new FileInputStream(new File(filename)))) {
-            Indexer.indexDocs(client, System.currentTimeMillis(), in,  testColl, batchSize);
+            Indexer.indexDocs(client, System.currentTimeMillis(), in,  testColl, batchSize,4);
         }
         client.close();
 

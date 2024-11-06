@@ -66,9 +66,11 @@ public class Indexer {
         final String coll;
         final int batchSz;
         boolean eol =  false;
+        int id;
 
 
-        IndexRunnable(AtomicLong total, BlockingArrayQueue<String> rows, SolrClient solrClient, String coll, int batchSz) {
+        IndexRunnable(int id, AtomicLong total, BlockingArrayQueue<String> rows, SolrClient solrClient, String coll, int batchSz) {
+            this.id = id;
             this.total = total;
             this.queue = rows;
             this.solrClient = solrClient;
@@ -117,6 +119,7 @@ public class Indexer {
         public void run() {
             for (; ; ) {
                 if (eol) break;
+                System.out.println("starting thread : "+id);
                 GenericSolrRequest gsr = new GenericSolrRequest(SolrRequest.METHOD.POST, "/update",
                         new MapSolrParams(Map.of("commit", "true")))
                         .setContentWriter(new RequestWriter.ContentWriter() {

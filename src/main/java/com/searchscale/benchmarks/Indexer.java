@@ -109,19 +109,19 @@ public class Indexer {
                 }
             }
             codec.writeTag(END);
+            codec.close();
         }
 
 
         @Override
         public void run() {
-            for(;;){
-                if(eol) break;
-            }
+            for (; ; ) {
+                if (eol) break;
                 GenericSolrRequest gsr = new GenericSolrRequest(SolrRequest.METHOD.POST, "/update",
                         new MapSolrParams(Map.of("commit", "true")))
                         .setContentWriter(new RequestWriter.ContentWriter() {
                             @Override
-                            public void write(OutputStream os) throws IOException{
+                            public void write(OutputStream os) throws IOException {
                                 streamDocsBatch(os);
                             }
 
@@ -131,13 +131,14 @@ public class Indexer {
                                 return CommonParams.JAVABIN_MIME;
                             }
 
-            });
+                        });
                 try {
                     gsr.process(solrClient, coll);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
+        }
 
     }
 

@@ -128,9 +128,9 @@ public class Indexer {
 
         @Override
         public void run() {
+            System.out.println("starting thread : "+id);
             for (; ; ) {
                 if (eol) break;
-                System.out.println("starting thread : "+id);
                 GenericSolrRequest gsr = new GenericSolrRequest(SolrRequest.METHOD.POST, "/update",
                         new MapSolrParams(Map.of("commit", "true")))
                         .setContentWriter(new RequestWriter.ContentWriter() {
@@ -152,6 +152,7 @@ public class Indexer {
                     throw new RuntimeException(e);
                 }
             }
+            System.out.println("exit thread :"+id);
         }
 
     }

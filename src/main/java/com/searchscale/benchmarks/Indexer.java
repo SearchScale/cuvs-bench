@@ -11,6 +11,10 @@ import org.apache.solr.common.MapWriter;
 import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.util.JavaBinCodec;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 
 
@@ -23,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.zip.GZIPInputStream;
 
 import static org.apache.solr.common.util.JavaBinCodec.*;
 
@@ -30,6 +35,45 @@ public class Indexer {
     static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     static final String EOL = "###";
+
+    public static void main(String[] args) throws Exception {
+        String inputFile = args[0];
+        String outputFile = args[1];
+        long docsCount=Long.parseLong(args[2]);
+
+        try (InputStream in = new GZIPInputStream(new FileInputStream(inputFile))) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String header = br.readLine();
+            FileOutputStream os = new FileOutputStream(outputFile);
+            JavaBinCodec codec = new JavaBinCodec(os, FLOAT_ARR_RESOLVER);
+            int count=0;
+
+            codec.writeTag(ITERATOR);
+            for(;;) {
+                String line = br.readLine();
+                if (line == null) {
+                    System.out.println(EOL);
+                    break;
+                }
+                MapWriter d = null;
+                try {
+                    d = parse(parseLine(line));
+                    codec.writeMap(d);
+
+                    count++;
+                    if(count>= docsCount) break;
+                } catch (Exception e) {
+                    //invalid doc
+                    continue;
+                }
+
+            }
+            codec.writeTag(END);
+            codec.close();
+            os.close();
+        }
+    }
+
 
     public static void indexDocs(SolrClient solrClient, long start, InputStream in, String coll, int batchSize, int threads) throws SolrServerException, IOException, InterruptedException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));

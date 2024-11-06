@@ -38,7 +38,7 @@ public class Indexer {
         System.out.println("\nStarting index %%%%%%%%%%%%%%%");
         Thread[] t = new Thread[threads];
         for (int i = 0; i < t.length; i++) {
-             t[i] = new Thread(new IndexRunnable(total, queue, solrClient, coll, batchSize));
+             t[i] = new Thread(new IndexRunnable(i,total, queue, solrClient, coll, batchSize));
              t[i].start();
         }
 

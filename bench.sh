@@ -16,8 +16,8 @@ tee -a cuvsconf/solrconfig.xml << EOM
 <config>
     <luceneMatchVersion>LATEST</luceneMatchVersion>
     <directoryFactory name="DirectoryFactory" class="solr.NRTCachingDirectoryFactory"/>
-        <!-- codecFactory name="CodecFactory" class="com.searchscale.lucene.vectorsearch.SolrCuVSCodecFactory" />
-        <queryParser name="cuvs" class="com.searchscale.lucene.vectorsearch.SolrCUVsQParserPlugin"/ -->
+        <codecFactory name="CodecFactory" class="com.searchscale.lucene.vectorsearch.SolrCuVSCodecFactory" />
+        <queryParser name="cuvs" class="com.searchscale.lucene.vectorsearch.SolrCUVsQParserPlugin"/>
     <requestHandler name="/select" class="solr.SearchHandler"></requestHandler>
 </config>
 EOM
@@ -38,15 +38,24 @@ tee -a cuvsconf/schema.xml << EOM
 </schema>
 EOM
 
-#sed '30i permission java.lang.RuntimePermission "loadLibrary.*";' server/etc/security.policy > tmp.policy
-#mv tmp.policy server/etc/security.policy
+sed '30i permission java.lang.RuntimePermission "loadLibrary.*";' server/etc/security.policy > tmp.policy
+mv tmp.policy server/etc/security.policy
 
-#cp $CUVSJAR server/solr-webapp/webapp/WEB-INF/lib/.
+cp /home/ishan/code/lucene-cuvs-internal/lucene/target/cuvs-searcher-lucene-0.0.1-SNAPSHOT-jar-with-dependencies.jar server/solr-webapp/webapp/WEB-INF/lib/.
 
 bin/solr -c -m "16g"
 
 server/scripts/cloud-scripts/zkcli.sh -zkhost localhost:9983 -cmd upconfig -confdir cuvsconf -confname cuvs
 curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=test&numShards=1&collection.configName=cuvs"
+
+curl -X POST -H "Content-Type: application/json" \
+     -d '{
+           "add-requesthandler": {
+             "name": "/directupdate",
+             "class": "solr.DirectIndexingRequestHandler"
+             }
+         }' \
+     http://localhost:8983/solr/test/config
 
 #indexing
 
@@ -59,3 +68,5 @@ curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=test&numSh
 
 #POST javabin payload to solr
 # time curl -X POST --data-binary "@100k.javabin" -H "Content-Type: application/javabin" http://localhost:8983/solr/test/update?commit=true
+
+

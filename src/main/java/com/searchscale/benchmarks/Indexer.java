@@ -45,7 +45,7 @@ public class Indexer {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String header = br.readLine();
             FileOutputStream os = new FileOutputStream(outputFile);
-            JavaBinCodec codec = new JavaBinCodec(os, FLOAT_ARR_RESOLVER);
+            JavaBinCodec codec = new J(os);
             int count=0;
 
             codec.writeTag(ITERATOR);
@@ -71,6 +71,27 @@ public class Indexer {
             codec.writeTag(END);
             codec.close();
             os.close();
+        }
+    }
+
+    static class J extends JavaBinCodec {
+        public J(OutputStream os) throws IOException {
+            super(os, null);
+        }
+
+        @Override
+        public void writeVal(Object o) throws IOException {
+            if (o instanceof float[] f) {
+                writeTag((byte)21);
+                writeTag(FLOAT);
+                writeVInt( f.length,daos);
+                for (float v : f) {
+                    writeFloat(v);
+                }
+              return;
+            } else {
+                super.writeVal(o);
+            }
         }
     }
 
@@ -124,7 +145,7 @@ public class Indexer {
             this.batchSz = batchSz;
         }
         private void streamDocsBatch(OutputStream os) throws IOException {
-            JavaBinCodec codec = new JavaBinCodec(os, FLOAT_ARR_RESOLVER);
+            JavaBinCodec codec = new J(os);
             codec.writeTag(ITERATOR);
             for(;;){
 
@@ -269,15 +290,5 @@ public class Indexer {
     }
     static TypeReference<List<Float>> valueTypeRef = new TypeReference<>() {
     };
-    static JavaBinCodec.ObjectResolver FLOAT_ARR_RESOLVER = (o, c) -> {
-        if (o instanceof float[]) {
-            c.writeTag(ARR, ((float[]) o).length);
-            for (float v : (float[]) o) {
-                c.writeFloat(v);
-            }
-            return null;
-        } else {
-            return o;
-        }
-    };
+
 }

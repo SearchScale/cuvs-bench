@@ -41,9 +41,9 @@ EOM
 sed '30i permission java.lang.RuntimePermission "loadLibrary.*";' server/etc/security.policy > tmp.policy
 mv tmp.policy server/etc/security.policy
 
-cp /home/ishan/code/lucene-cuvs-internal/lucene/target/cuvs-searcher-lucene-0.0.1-SNAPSHOT-jar-with-dependencies.jar server/solr-webapp/webapp/WEB-INF/lib/.
+cp /home/ishan/code/lucene-cuvs-internal/lucene/target/cuvs-searcher-lucene-0.0.1-SNAPSHOT-jar-with-dependencies.jar server/solr-webapp/webapp/WEB-INF/lib/z-cuvs-searcher-lucene-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 
-bin/solr -c -m "16g"
+bin/solr -c -m "32g"
 
 server/scripts/cloud-scripts/zkcli.sh -zkhost localhost:9983 -cmd upconfig -confdir cuvsconf -confname cuvs
 curl "http://localhost:8983/solr/admin/collections?action=CREATE&name=test&numShards=1&collection.configName=cuvs"
@@ -70,4 +70,4 @@ curl -X POST -H "Content-Type: application/json" \
 # time curl -X POST --data-binary "@200k.javabin" -H "Content-Type: application/javabin" "http://localhost:8983/solr/test/directupdate?commit=true"
 
 
- http  POST http://localhost:8983/solr/test/directupdate?commit=true  @/data/500k.javabin
+ http  POST http://localhost:8983/solr/test/directupdate?commit=true  @/data/200k.javabin

@@ -86,9 +86,8 @@ public class Indexer {
                 writeTag(FLOAT);
                 writeVInt( f.length,daos);
                 for (float v : f) {
-                    writeFloat(v);
+                    daos.writeFloat(v);
                 }
-              return;
             } else {
                 super.writeVal(o);
             }

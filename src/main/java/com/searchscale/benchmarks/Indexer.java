@@ -47,9 +47,11 @@ public class Indexer {
             String header = br.readLine();
             int count =0;
             for(int i=0;;i++) {
-                try(FileOutputStream os = new FileOutputStream(outputFile+"."+i)) {
+                String name = outputFile + "." + i;
+                try(FileOutputStream os = new FileOutputStream(name)) {
                     JavaBinCodec codec = new J(os);
                     if(!writeBatch(batchSz, br, codec)) break;
+                    System.out.println(name);
                     count+= batchSz;
                     if(count > docsCount) break;
                 }

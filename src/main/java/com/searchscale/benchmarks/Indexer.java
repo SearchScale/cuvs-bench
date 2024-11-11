@@ -12,7 +12,6 @@ import org.apache.solr.common.params.CommonParams;
 import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.util.JavaBinCodec;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -40,38 +39,51 @@ public class Indexer {
         String inputFile = args[0];
         String outputFile = args[1];
         long docsCount=Long.parseLong(args[2]);
+        long batchSz = args.length > 3? Long.parseLong(args[3]): docsCount;
+        if(batchSz> docsCount) batchSz = docsCount;
 
         try (InputStream in = new GZIPInputStream(new FileInputStream(inputFile))) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String header = br.readLine();
-            FileOutputStream os = new FileOutputStream(outputFile);
-            JavaBinCodec codec = new J(os);
-            int count=0;
-
-            codec.writeTag(ITERATOR);
-            for(;;) {
-                String line = br.readLine();
-                if (line == null) {
-                    System.out.println(EOL);
-                    break;
+            int count =0;
+            for(int i=0;;i++) {
+                try(FileOutputStream os = new FileOutputStream(i+"."+outputFile)) {
+                    JavaBinCodec codec = new J(os);
+                    if(!writeBatch(batchSz, br, codec)) break;
+                    count+= batchSz;
+                    if(count > docsCount) break;
                 }
-                MapWriter d = null;
-                try {
-                    d = parse(parseLine(line));
-                    codec.writeMap(d);
-
-                    count++;
-                    if(count>= docsCount) break;
-                } catch (Exception e) {
-                    //invalid doc
-                    continue;
-                }
-
             }
-            codec.writeTag(END);
-            codec.close();
-            os.close();
         }
+    }
+
+    private static boolean writeBatch(long docsCount,
+                                   BufferedReader br
+            , JavaBinCodec codec ) throws IOException {
+        codec.writeTag(ITERATOR);
+        int count = 0;
+        for(;;) {
+            String line = br.readLine();
+            if (line == null) {
+                System.out.println(EOL);
+                return false;
+            }
+            MapWriter d = null;
+            try {
+                d = parse(parseLine(line));
+                codec.writeMap(d);
+
+                count++;
+                if(count >= docsCount) break;
+            } catch (Exception e) {
+                //invalid doc
+                continue;
+            }
+
+        }
+        codec.writeTag(END);
+        codec.close();
+        return true;
     }
 
     static class J extends JavaBinCodec {

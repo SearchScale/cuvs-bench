@@ -47,7 +47,7 @@ public class Indexer {
             String header = br.readLine();
             int count =0;
             for(int i=0;;i++) {
-                try(FileOutputStream os = new FileOutputStream(i+"."+outputFile)) {
+                try(FileOutputStream os = new FileOutputStream(outputFile+"."+i)) {
                     JavaBinCodec codec = new J(os);
                     if(!writeBatch(batchSz, br, codec)) break;
                     count+= batchSz;

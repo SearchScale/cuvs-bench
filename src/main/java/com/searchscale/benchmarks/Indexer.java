@@ -41,6 +41,7 @@ public class Indexer {
         long docsCount=Long.parseLong(args[2]);
         long batchSz = args.length > 3? Long.parseLong(args[3]): docsCount;
         if(batchSz> docsCount) batchSz = docsCount;
+        boolean legacy = args.length >4 ? Boolean.parseBoolean(args[4]): false;
 
         try (InputStream in = new GZIPInputStream(new FileInputStream(inputFile))) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -50,7 +51,7 @@ public class Indexer {
                 String name = outputFile + "." + i;
                 try(FileOutputStream os = new FileOutputStream(name)) {
                     JavaBinCodec codec = new J(os);
-                    if(!writeBatch(batchSz, br, codec)) break;
+                    if(!writeBatch(batchSz, br, codec, legacy)) break;
                     System.out.println(name);
                     count+= batchSz;
                     if(count > docsCount) break;
@@ -60,8 +61,8 @@ public class Indexer {
     }
 
     private static boolean writeBatch(long docsCount,
-                                   BufferedReader br
-            , JavaBinCodec codec ) throws IOException {
+                                      BufferedReader br
+            , JavaBinCodec codec, boolean legacy) throws IOException {
         codec.writeTag(ITERATOR);
         int count = 0;
         for(;;) {
@@ -72,7 +73,7 @@ public class Indexer {
             }
             MapWriter d = null;
             try {
-                d = parse(parseLine(line));
+                d = parseRow(parseLine(line), legacy);
                 codec.writeMap(d);
 
                 count++;
@@ -179,7 +180,7 @@ public class Indexer {
                 } else {
                     MapWriter d = null;
                     try {
-                        d = parse(parseLine(line));
+                        d = parseRow(parseLine(line), false);
                     } catch (Exception e) {
                         //invalid doc
                         continue;
@@ -236,11 +237,11 @@ public class Indexer {
     }
 
 
-    static MapWriter parse(String[] row) {
+    static MapWriter parseRow(String[] row, boolean legacy) {
         String id;
         String title;
         String article;
-        float[] article_vector;
+        Object article_vector;
         if (row.length < 4) {
             throw new IllegalArgumentException("Invalid row");
         }
@@ -255,9 +256,16 @@ public class Indexer {
             }
 
             List<Float> floatList = OBJECT_MAPPER.readValue(json, valueTypeRef);
-            article_vector = new float[floatList.size()];
-            for (int i = 0; i < article_vector.length; i++) {
-                article_vector[i] = floatList.get(i);
+
+            if(legacy){
+                article_vector = floatList;
+
+            } else {
+                float[] floats = new float[floatList.size()];
+                for (int i = 0; i < floatList.size(); i++) {
+                    floats[i] = floatList.get(i);
+                }
+                article_vector = floats;
             }
 
             return ew -> {

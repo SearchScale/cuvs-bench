@@ -42,6 +42,9 @@ public class Indexer {
         long batchSz = args.length > 3? Long.parseLong(args[3]): docsCount;
         if(batchSz> docsCount) batchSz = docsCount;
         boolean legacy = args.length >4 ? Boolean.parseBoolean(args[4]): false;
+        System.out.println("docs: " + docsCount );
+        System.out.println("batch: " + batchSz );
+        System.out.println("legacy: " + legacy );
 
         try (InputStream in = new GZIPInputStream(new FileInputStream(inputFile))) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));

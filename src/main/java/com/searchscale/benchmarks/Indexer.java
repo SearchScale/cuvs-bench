@@ -36,25 +36,21 @@ public class Indexer {
     static final String EOL = "###";
 
     public static void main(String[] args) throws Exception {
-        String inputFile = args[0];
-        String outputFile = args[1];
-        long docsCount=Long.parseLong(args[2]);
-        long batchSz = args.length > 3? Long.parseLong(args[3]): docsCount;
+        SolrBenchmark.Params p =  new SolrBenchmark.Params(args);
+        long docsCount=p.docsCount;
+        long batchSz = p.batchSize;
+        System.out.println(p.p.toString());
         if(batchSz> docsCount) batchSz = docsCount;
-        boolean legacy = args.length >4 ? Boolean.parseBoolean(args[4]): false;
-        System.out.println("docs: " + docsCount );
-        System.out.println("batch: " + batchSz );
-        System.out.println("legacy: " + legacy );
 
-        try (InputStream in = new GZIPInputStream(new FileInputStream(inputFile))) {
+        try (InputStream in = new GZIPInputStream(new FileInputStream(p.dataFile))) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String header = br.readLine();
             int count =0;
             for(int i=0;;i++) {
-                String name = outputFile + "." + i;
+                String name = p.outputFile + "." + i;
                 try(FileOutputStream os = new FileOutputStream(name)) {
                     JavaBinCodec codec = new J(os);
-                    if(!writeBatch(batchSz, br, codec, legacy)) break;
+                    if(!writeBatch(batchSz, br, codec, p.isLegacy)) break;
                     System.out.println(name);
                     count+= batchSz;
                     if(count > docsCount) break;

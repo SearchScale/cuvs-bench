@@ -59,6 +59,14 @@ curl -X POST -H "Content-Type: application/json" \
          }' \
      http://localhost:8983/solr/test/config
 
+curl -X POST -H "Content-Type: application/json" \
+     -d '{
+           "add-requesthandler": {
+             "name": "/cuvs-merges",
+             "class": "com.searchscale.lucene.vectorsearch.CuvsStatsHandler"
+             }
+         }' \
+     http://localhost:8983/solr/test/config
 #indexing
 
 #time python3 $BASEDIR/jsonify.py $DATAFILE 2048 50000 4

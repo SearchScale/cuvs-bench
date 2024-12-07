@@ -73,8 +73,8 @@ curl -X POST -H "Content-Type: application/json" \
 
 #java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.SolrBenchmark data_file=/data/wikipedia_vector_dump.csv.gz  docs_count=-1 batch_size=100000 threads=3
 
-#generate javabin last param true=legacy
-#java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.Indexer data_file=data/data/wikipedia_vector_dump.csv.gz  output_file=/data/javabin/100k.javabin docs_count=1000000 batch_size=100000 legacy=true
+#generate javabin
+#java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.Indexer data_file=/data/wikipedia_vector_dump.csv.gz  output_file=/data/javabin/100k.javabin docs_count=1000000 batch_size=100000 legacy=true
 
 #POST javabin payload to solr
 # time curl -X POST --data-binary "@200k.javabin" -H "Content-Type: application/javabin" "http://localhost:8983/solr/test/directupdate?commit=true"

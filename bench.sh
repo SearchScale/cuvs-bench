@@ -7,8 +7,8 @@ pkill -9 java
 
 #wget -c https://dlcdn.apache.org/solr/solr/9.7.0/solr-9.7.0.tgz
 #wget -c https://archive.apache.org/dist/solr/solr/9.6.1/solr-9.6.1.tgz
-rm -rf solr-9.6.2-SNAPSHOT-slim; tar -xf solr-9.6.2-SNAPSHOT-slim.tgz
-cd solr-9.6.2-SNAPSHOT-slim
+rm -rf solr-9.7.0-SNAPSHOT-slim; tar -xf solr-9.7.0-SNAPSHOT-slim.tgz
+cd solr-9.7.0-SNAPSHOT-slim
 rm -rf cuvsconf; mkdir cuvsconf
 
 tee -a cuvsconf/solrconfig.xml << EOM
@@ -86,3 +86,5 @@ curl -X POST -H "Content-Type: application/json" \
 
 #example running query program
 #java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.Searcher  solr_url=http://localhost:8983/solr query_file=questions.vec.txt.gz query_count=1
+
+# curl "http://localhost:8983/solr/test/cuvs-merges"

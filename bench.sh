@@ -86,5 +86,5 @@ curl -X POST -H "Content-Type: application/json" \
 
 #example running query program
 #java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.Searcher  solr_url=http://localhost:8983/solr query_file=questions.vec.txt.gz query_count=1
-
+# curl "http://localhost:8983/solr/test/update?optimize=true&maxSegments=1&waitSearcher=true"
 # curl "http://localhost:8983/solr/test/cuvs-merges"

@@ -19,5 +19,3 @@ wait
 
 # Wait for all background processes to finish
 echo "All files in the directory uploaded."
-
-curl "http://localhost:8983/solr/test/update?optimize=true&maxSegments=1&waitSearcher=true"

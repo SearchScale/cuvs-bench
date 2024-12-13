@@ -30,7 +30,7 @@ public class Searcher {
             for(int i=0;i<p.queryCount;i++) {
                 String qvec = br.readLine();
                 //?q={!cuvs f=vector topK=32 cagraITopK=1 cagraSearchWidth=5 }[1.0, 2.0, 3.0, 4.0]
-                client.query(new MapSolrParams(Map.of("q", "{!cuvs f=article_vector topK=32 cagraITopK=1 cagraSearchWidth=5}" + qvec)));
+                client.query(p.testColl,  new MapSolrParams(Map.of("q", "{!cuvs f=article_vector topK=32 cagraITopK=1 cagraSearchWidth=5}" + qvec)));
             }
         }
         System.out.println("time taken: "+(System.currentTimeMillis() -start));

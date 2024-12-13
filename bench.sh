@@ -1,3 +1,6 @@
+
+# mvn package; mvn assembly:single
+
 CUVSJAR="/home/ishan/code/lucene-cuvs-internal/lucene/target/cuvs-searcher-lucene-0.0.1-SNAPSHOT-jar-with-dependencies.jar"
 DATAFILE="/home/ishan/code/wikipedia_vector_dump.csv.gz"
 
@@ -18,6 +21,9 @@ tee -a cuvsconf/solrconfig.xml << EOM
     <directoryFactory name="DirectoryFactory" class="solr.NRTCachingDirectoryFactory"/>
         <codecFactory name="CodecFactory" class="com.searchscale.lucene.vectorsearch.SolrCuVSCodecFactory">
          <str name="cuvsWriterThreads">24</str>
+         <str name="mergeStrategy">NON_TRIVIAL_MERGE</str>
+         <str name="intGraphDegree">64</str>
+         <str name="graphDegree">128</str>
         </codecFactory>
         <queryParser name="cuvs" class="com.searchscale.lucene.vectorsearch.SolrCUVsQParserPlugin"/>
     <requestHandler name="/select" class="solr.SearchHandler"></requestHandler>
@@ -85,6 +91,6 @@ curl -X POST -H "Content-Type: application/json" \
 # http  POST http://localhost:8983/solr/test/directupdate?commit=true  @/data/200k.javabin
 
 #example running query program
-#java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.Searcher  solr_url=http://localhost:8983/solr query_file=questions.vec.txt.gz query_count=1
+#java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.Searcher  solr_url=http://localhost:8983/solr query_file=questions.vec.txt.gz query_count=1 test_coll=test
 # curl "http://localhost:8983/solr/test/update?optimize=true&maxSegments=1&waitSearcher=true"
 # curl "http://localhost:8983/solr/test/cuvs-merges"

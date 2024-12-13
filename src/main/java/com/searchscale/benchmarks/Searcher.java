@@ -1,6 +1,7 @@
 package com.searchscale.benchmarks;
 
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.Http2SolrClient;
 import org.apache.solr.common.params.MapSolrParams;
@@ -30,7 +31,10 @@ public class Searcher {
             for(int i=0;i<p.queryCount;i++) {
                 String qvec = br.readLine();
                 //?q={!cuvs f=vector topK=32 cagraITopK=1 cagraSearchWidth=5 }[1.0, 2.0, 3.0, 4.0]
-                client.query(p.testColl,  new MapSolrParams(Map.of("q", "{!cuvs f=article_vector topK=32 cagraITopK=1 cagraSearchWidth=5}" + qvec)));
+                client.query(p.testColl,
+                        new MapSolrParams(Map.of("q", "{!cuvs f=article_vector topK=32 cagraITopK=1 cagraSearchWidth=5}" + qvec)),
+                        SolrRequest.METHOD.POST
+                        );
             }
         }
         System.out.println("time taken: "+(System.currentTimeMillis() -start));

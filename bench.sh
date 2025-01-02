@@ -19,7 +19,7 @@ tee -a cuvsconf/solrconfig.xml << EOM
 <config>
     <luceneMatchVersion>LATEST</luceneMatchVersion>
     <directoryFactory name="DirectoryFactory" class="solr.NRTCachingDirectoryFactory"/>
-        <codecFactory name="CodecFactory" class="com.searchscale.lucene.vectorsearch.SolrCuVSCodecFactory">
+        <codecFactory name="CodecFactory" class="com.searchscale.lucene.vectorsearch.solr.CuvsCodecFactory">
          <str name="cuvsWriterThreads">24</str>
          <str name="mergeStrategy">NON_TRIVIAL_MERGE</str>
          <str name="intGraphDegree">64</str>
@@ -35,7 +35,7 @@ tee -a cuvsconf/schema.xml << EOM
 <?xml version="1.0" ?>
 <schema name="cuvs-schema" version="1.7">
     <fieldType name="string" class="solr.StrField" multiValued="true"/>
-    <fieldType name="knn_vector" class="solr.DenseVectorField" vectorDimension="2048" similarityFunction="cosine" />
+    <fieldType name="knn_vector" class="solr.DenseVectorField" vectorDimension="2048" similarityFunction="cosine" knnAlgorithm="cuvs" />
     <fieldType name="plong" class="solr.LongPointField" useDocValuesAsStored="false"/>
     <field name="id" type="string" indexed="true" stored="true" multiValued="false" required="false"/>
     <field name="title" type="string" indexed="true" stored="true" multiValued="false" required="false"/>
@@ -92,5 +92,5 @@ curl -X POST -H "Content-Type: application/json" \
 
 #example running query program
 #java -cp ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT.jar:./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar com.searchscale.benchmarks.Searcher  solr_url=http://localhost:8983/solr query_file=questions.vec.txt.gz query_count=1 test_coll=test
-# curl "http://localhost:8983/solr/test/update?optimize=true&maxSegments=1&waitSearcher=true"
+# curl "http://localhost:8983/solr/test/update?optimize=true&maxSegments=2&waitSearcher=true"
 # curl "http://localhost:8983/solr/test/cuvs-merges"

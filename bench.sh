@@ -25,7 +25,7 @@ tee -a cuvsconf/solrconfig.xml << EOM
          <str name="intGraphDegree">64</str>
          <str name="graphDegree">128</str>
         </codecFactory>
-        <queryParser name="cuvs" class="com.searchscale.lucene.vectorsearch.SolrCUVsQParserPlugin"/>
+        <queryParser name="cuvs" class="com.searchscale.lucene.vectorsearch.solr.CuvsQParserPlugin"/>
     <requestHandler name="/select" class="solr.SearchHandler"></requestHandler>
 </config>
 EOM

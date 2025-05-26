@@ -39,7 +39,8 @@ Building benchmarking project
 =============================
 
 * Clone https://github.com/searchscale/cuvs-bench
-* mvn compile assembly:single
+* Checkout branch `noble/cuvs-panama`
+* `mvn compile assembly:single`
 
 (This will create the artifact ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar)
 

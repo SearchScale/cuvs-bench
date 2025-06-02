@@ -51,8 +51,13 @@ Preparing Dataset
 * Copy the following into the `workingarea`:
 
     cp code/solr/solr/packaging/build/distributions/solr-10.0.0-SNAPSHOT.tgz workingarea/.
+  
     cp -r code/solr/solr/example/cuvsexample workingarea/.
+
     cp -r code/cuvs-bench/upload_all.sh workingarea/.
+
+    cp -r code/cuvs-bench/target/*jar workingarea/.
+
     cp -r code/cuvs-bench/start-solr10.sh workingarea/.
 
 * Download the dataset:

@@ -83,3 +83,31 @@ Running Solr & Uploading batches
     ./upload_all.sh
 
 Visit http://localhost:8983/ in browser, click "test" on left pane under "Collections", and issue a query `"*:*"`. It should show numFound as 200k
+
+Changing hyper parameters for HNSW and cuVS
+===========================================
+
+To use HNSW, define the knn_vector field type as follows in `cuvsexample/conf/schema.xml`:
+
+        <!--fieldType name="knn_vector" class="solr.DenseVectorField" vectorDimension="2048" knnAlgorithm="cuvs" similarityFunction="cosine" /-->
+        <fieldType name="knn_vector" class="solr.DenseVectorField" vectorDimension="2048" knnAlgorithm="hnsw" hnswMaxConnections="256" hnswBeamWidth="512" similarityFunction="cosine" />
+
+To use cuVS, define the knn_vector field type as follows in `cuvsexample/conf/schema.xml`:
+
+        <fieldType name="knn_vector" class="solr.DenseVectorField" vectorDimension="2048" knnAlgorithm="cuvs" similarityFunction="cosine" />
+        <!--fieldType name="knn_vector" class="solr.DenseVectorField" vectorDimension="2048" knnAlgorithm="hnsw" hnswMaxConnections="256" hnswBeamWidth="512" similarityFunction="cosine" /-->
+
+
+Hyper parameters for HNSW is modified as above.
+Hyper parameters for cuVS is modified as follows in `cuvsexample/conf/solrconfig.xml`:
+
+        <codecFactory name="CodecFactory" class="org.apache.solr.core.CuvsCodecFactory">
+            <int name="cuvsWriterThreads">8</int> 
+            <int name="graphDegree">32</int> 
+            <int name="intGraphDegree">32</int> 
+        </codecFactory>
+
+knn Search
+==========
+
+[https://solr.apache.org/guide/solr/latest/query-guide/dense-vector-search.html#query-time](https://solr.apache.org/guide/solr/latest/query-guide/dense-vector-search.html#knn-query-parser)

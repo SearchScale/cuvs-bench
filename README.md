@@ -2,7 +2,8 @@ Prerequisites
 =============
 
 * Install CUDA (12.6 or 12.8)
-* apt install libnccl-dev httpie curl
+* Install CMake 3.30+
+* apt install ninja-build libnccl-dev httpie curl
 * Install JDK 22
 * Install Maven 3.9.6+
 

@@ -118,3 +118,6 @@ Example: http://localhost:8983/solr/test/select?q={!cuvs f=knn_vector topK=10}[1
 Tweaking merge
 ==============
 https://solr.apache.org/guide/7_7/indexconfig-in-solrconfig.html#merging-index-segments
+
+These go into: cuvsexample/conf/solrconfig.xml
+

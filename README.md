@@ -111,3 +111,5 @@ knn Search
 ==========
 
 [https://solr.apache.org/guide/solr/latest/query-guide/dense-vector-search.html#query-time](https://solr.apache.org/guide/solr/latest/query-guide/dense-vector-search.html#knn-query-parser)
+
+Example: http://localhost:8983/solr/test/select?q={!cuvs f=vector topK=10}[1.0, 2.0, 3.0, 4.0] (Make sure this array has 2048 elements)

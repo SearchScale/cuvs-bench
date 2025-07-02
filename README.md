@@ -13,7 +13,7 @@ Building cuVS 25.08
 * Clone https://github.com/rapidsai/cuvs
 * Checkout branch branch-25.08
 * `./build.sh libcuvs`
-* ```export CUVS_SRC_DIR=\`pwd\````
+* ` export CUVS_SRC_DIR=$(pwd)`
 
 (This will build the .so file needed. The java artifacts will come from SearchScale maven.)
 
@@ -34,7 +34,7 @@ Building Solr with Lucene and cuVS
 * Clone https://github.com/searchscale/solr
 * Checkout branch `ishan/cuvs-integration-2408`
 * `./gradlew assemble distTar`
-* ```export SOLR_SRC_DIR=\`pwd\````
+* `export SOLR_SRC_DIR=$(pwd)`
 
 
 (This will build Solr 10.0.0-SNAPSHOT and place artifacts in ./solr/packaging/build/distributions/solr-10.0.0-SNAPSHOT.tgz)
@@ -45,7 +45,7 @@ Building benchmarking project
 * Clone https://github.com/searchscale/cuvs-bench
 * Checkout branch `noble/cuvs-panama-2408`
 * `mvn compile assembly:single`
-* ```export CUVS_BENCH_DIR=\`pwd\````
+* `export CUVS_BENCH_DIR=$(pwd)`
 
 
 (This will create the artifact ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar)

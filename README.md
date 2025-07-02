@@ -7,23 +7,24 @@ Prerequisites
 * Install JDK 22
 * Install Maven 3.9.6+
 
-Building cuVS 25.02
+Building cuVS 25.08
 ===================
 
 * Clone https://github.com/rapidsai/cuvs
-* Checkout branch branch-25.02
+* Checkout branch branch-25.08
 * `./build.sh libcuvs`
-* `./build.sh java`
+* ```export CUVS_SRC_DIR=\`pwd\````
 
-(This should install the Java artifacts to the local Maven repository)
+(This will build the .so file needed. The java artifacts will come from SearchScale maven.)
 
 
 Building Lucene with cuVS
 =========================
 
 * Clone https://github.com/searchscale/lucene
-* Checkout branch `cuvs-integration-10x`
+* Checkout branch `cuvs-integration-10x-24.08`
 * `./gradlew mavenToLocal`
+
 
 (This will build Lucene 10.2.0-SNAPSHOT and install artifacts to local Maven repository)
 
@@ -31,8 +32,10 @@ Building Solr with Lucene and cuVS
 ==================================
 
 * Clone https://github.com/searchscale/solr
-* Checkout branch `ishan/cuvs-integration`
+* Checkout branch `ishan/cuvs-integration-2408`
 * `./gradlew assemble distTar`
+* ```export SOLR_SRC_DIR=\`pwd\````
+
 
 (This will build Solr 10.0.0-SNAPSHOT and place artifacts in ./solr/packaging/build/distributions/solr-10.0.0-SNAPSHOT.tgz)
 
@@ -40,26 +43,30 @@ Building benchmarking project
 =============================
 
 * Clone https://github.com/searchscale/cuvs-bench
-* Checkout branch `noble/cuvs-panama`
+* Checkout branch `noble/cuvs-panama-2408`
 * `mvn compile assembly:single`
+* ```export CUVS_BENCH_DIR=\`pwd\````
+
 
 (This will create the artifact ./target/solr-cuvs-benchmarks-1.0-SNAPSHOT-jar-with-dependencies.jar)
 
 Preparing Dataset
 =================
 
-* Create a new work folder, say `/home/ishan/workingarea`.
+* Create a new work folder, say `/home/ishan/code/workingarea`.
 * Copy the following into the `workingarea`:
 
-    cp code/solr/solr/packaging/build/distributions/solr-10.0.0-SNAPSHOT.tgz workingarea/.
+    cp $CUVS_BENCH_DIR/target/*jar workingarea/.
+
+    cp $SOLR_SRC_DIR/solr/packaging/build/distributions/solr-10.0.0-SNAPSHOT.tgz workingarea/.
   
-    cp -r code/solr/solr/example/cuvsexample workingarea/.
+    cp -r $SOLR_SRC_DIR/solr/example/cuvsexample workingarea/.
 
-    cp -r code/cuvs-bench/upload_all.sh workingarea/.
+    cp -r $CUVS_BENCH_DIR/upload_all.sh workingarea/.
 
-    cp -r code/cuvs-bench/target/*jar workingarea/.
+    cp -r $CUVS_BENCH_DIR/target/*jar workingarea/.
 
-    cp -r code/cuvs-bench/start-solr10.sh workingarea/.
+    cp -r $CUVS_BENCH_DIR/start-solr10.sh workingarea/.
 
 * Download the dataset:
 
@@ -78,6 +85,8 @@ Preparing Dataset
 Running Solr & Uploading batches
 ================================
 
+    sudo apt install curl httpie -y
+    export LD_LIBRARY_PATH=$CUVS_SRC_DIR/cpp/build:$LD_LIBRARY_PATH
     chmod +x *.sh
     ./start-solr10.sh
     ./upload_all.sh
